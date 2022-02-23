@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue training</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <style>
+    .canvas {
+      margin-top: 10px;
+      width: 200px;
+      height: 200px;
+      border: 1px solid gray;
+    }
+  </style>
+</head>
+<body>
+  <div id="vue-app">
+    <h1>{{ name }} Age: {{ details.age }}</h1>
+    <h2>{{ greet('Good afternoon') }} {{ showTime() }}</h2>
+    <a :href="link">Google</a>
+    <input type="text" :value="name">
+    <div v-html="tag"></div>
+
+    <h2>Events</h2>
+    <!-- v-on:click = onClick -->
+    <button v-on:click="handleAddAge(1)">Add to age</button>
+    <button v-on:click="details.age--">Subtract to age</button>
+    <button v-on:dblclick="handleAddAge(10)">Add 10 to age</button>
+    <button v-on:dblclick="handleSubtractAge(10)">Subtract 10 to age</button>
+    <div class="canvas" v-on:mousemove="trackCurser">
+      x: {{x}}, y: {{y}}
+    </div>
+  </div>
+</body>
+
+<script>
+  new Vue({
+    el: '#vue-app',
+    data: {
+      x: 0,
+      y: 0,
+      name: 'Kiran villa',
+      details: {
+        age: 29,
+      },
+      link: 'https://www.google.com',
+      tag: '<h3>I am a header tag</h3>'
+    },
+    methods: {
+      greet(message) {
+        return 'Hello' + ' ' + this.name 
+      },
+      showTime() {
+        return new Date().getFullYear()
+      },
+      handleAddAge(value) {
+        this.details.age += value
+      },
+      handleSubtractAge(value) {
+        this.details.age -= value
+      },
+      trackCurser(event) {
+        this.x = event.offsetX
+        this.y = event.offsetY
+      }
+    }
+  });
+</script>
+</html>
