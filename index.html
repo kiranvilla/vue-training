@@ -17,20 +17,41 @@
 </head>
 <body>
   <div id="vue-app">
-    <h1>{{ name }} Age: {{ details.age }}</h1>
-    <h2>{{ greet('Good afternoon') }} {{ showTime() }}</h2>
-    <a :href="link">Google</a>
-    <input type="text" :value="name">
-    <div v-html="tag"></div>
+    <h3>Event modifiers</h3>
+    <form>
+      <input>
+      <input type="submit" value="Submit" @click.prevent="handleSubmit">
+    </form>
+    <a @click.prevent href="google.com">Google</a>
+    <input type="text" @change.ctrl.enter="handleInput">
 
-    <h2>Events</h2>
-    <!-- v-on:click = onClick -->
-    <button v-on:click="handleAddAge(1)">Add to age</button>
-    <button v-on:click="details.age--">Subtract to age</button>
-    <button v-on:dblclick="handleAddAge(10)">Add 10 to age</button>
-    <button v-on:dblclick="handleSubtractAge(10)">Subtract 10 to age</button>
-    <div class="canvas" v-on:mousemove="trackCurser">
-      x: {{x}}, y: {{y}}
+    <h3>Two way data binding</h3>
+    <div><h3>{{ name }}</h3></div>
+    <input type="text" v-model="name">
+    <input type="checkbox" id="terms" v-model="acceptTerms">
+    <label for="terms">Accept terms</label>
+    <pre>
+      {{ acceptTerms }}
+    </pre>
+
+    <h3>Conditionals</h3>
+    <!-- v-if, v-else, v-else-if -->
+    <div v-if="name === 'Ashish'">If</div>
+    <div v-else-if="name === 'kiran'"></div>
+    <div v-else-if="name === 'santosh'">Santosh</div>
+    <div v-else>Else</div>
+    
+    <!-- v-show -->
+    <h4>v-show</h4>
+    <div v-show="name === 'Ashish'">V- show message</div>
+
+    <!-- computed properties -->
+    <h3>Computed</h3>
+    <div>
+      <h4>A + Age {{ aPlusAge }}</h4>
+      <h4>B + Age {{ bPlusAge }}</h4>
+      <button @click="addToA">Add to A</button>
+      <button @click="addToB">Add to B</button>
     </div>
   </div>
 </body>
@@ -39,31 +60,45 @@
   new Vue({
     el: '#vue-app',
     data: {
-      x: 0,
-      y: 0,
-      name: 'Kiran villa',
-      details: {
-        age: 29,
-      },
-      link: 'https://www.google.com',
-      tag: '<h3>I am a header tag</h3>'
+      name: 'xyz',
+      acceptTerms: false,
+      a: 0,
+      b: 0,
+      age: 20
     },
+
+    computed: {
+      aPlusAge() {
+        console.log('I am A')
+        return this.a + this.age
+      },
+      bPlusAge() {
+        console.log('I am B')
+        return this.b + this.age
+      },
+    },
+
     methods: {
-      greet(message) {
-        return 'Hello' + ' ' + this.name 
+      handleSubmit(event) {
+        // event.preventDefault()
+        console.log('submitted')
       },
-      showTime() {
-        return new Date().getFullYear()
+      handleInput(event) {
+        console.log(event.target.value)
       },
-      handleAddAge(value) {
-        this.details.age += value
+      // aPlusAge() {
+      //   console.log('I am A')
+      //   return this.a + this.age
+      // },
+      // bPlusAge() {
+      //   console.log('I am B')
+      //   return this.b + this.age
+      // },
+      addToA() {
+        this.a += 1
       },
-      handleSubtractAge(value) {
-        this.details.age -= value
-      },
-      trackCurser(event) {
-        this.x = event.offsetX
-        this.y = event.offsetY
+      addToB() {
+        this.b += 1
       }
     }
   });
