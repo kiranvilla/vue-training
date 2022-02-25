@@ -6,53 +6,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vue training</title>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-  <style>
-    .canvas {
-      margin-top: 10px;
-      width: 200px;
-      height: 200px;
-      border: 1px solid gray;
-    }
-  </style>
 </head>
+<style>
+  .container {
+    width: 200px;
+    padding: 10px;
+    margin-top: 10px;
+    background: cyan;
+  }
+  .active {
+    background: red;
+  }
+  .bar {
+    width: 200px;
+    height: 15px;
+    border: 2px solid gray;
+  }
+</style>
 <body>
   <div id="vue-app">
-    <h3>Event modifiers</h3>
-    <form>
-      <input>
-      <input type="submit" value="Submit" @click.prevent="handleSubmit">
-    </form>
-    <a @click.prevent href="google.com">Google</a>
-    <input type="text" @change.ctrl.enter="handleInput">
+    <h2><u>Watchers</u></h2>
+    <h1>{{ firstName }}</h1>
+    <input type="text" v-model="firstName" />
+    <h3>Full Name: {{ fullName }}</h3>
+    <input type="text" v-model="address.streetName" />
+    <span>Street Name: {{ address.streetName }}</span><br><br>
+    <input type="checkbox" v-model="address.isActive" id="active" />
+    <label for="active">Active</label>
 
-    <h3>Two way data binding</h3>
-    <div><h3>{{ name }}</h3></div>
-    <input type="text" v-model="name">
-    <input type="checkbox" id="terms" v-model="acceptTerms">
-    <label for="terms">Accept terms</label>
-    <pre>
-      {{ acceptTerms }}
-    </pre>
-
-    <h3>Conditionals</h3>
-    <!-- v-if, v-else, v-else-if -->
-    <div v-if="name === 'Ashish'">If</div>
-    <div v-else-if="name === 'kiran'"></div>
-    <div v-else-if="name === 'santosh'">Santosh</div>
-    <div v-else>Else</div>
-    
-    <!-- v-show -->
-    <h4>v-show</h4>
-    <div v-show="name === 'Ashish'">V- show message</div>
-
-    <!-- computed properties -->
-    <h3>Computed</h3>
+    <h3><u>Looping v-for</u></h3>
     <div>
-      <h4>A + Age {{ aPlusAge }}</h4>
-      <h4>B + Age {{ bPlusAge }}</h4>
-      <button @click="addToA">Add to A</button>
-      <button @click="addToB">Add to B</button>
+      <ul>
+        <li v-for="(element, index) in toDo">
+          {{ index + 1 }} {{ element }}
+        </li>
+      </ul>
     </div>
+
+    <h3 style="color: red" :style="{'font-size': '20px'}">user active: {{ address.isActive ? 'YES' : 'NO' }}</h3>
+
+    <h4>car list</h4>
+    <div>
+      <ul>
+        <li v-for="item in carList" :style="{color: item.color}">
+          Name: {{ item.name }}, Price: {{ item.value }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- looping through objects -->
+    <h4>Object looping</h4>
+    <ul>
+      <li v-for="(value, key) in carFeatures">
+        {{ key }} - {{ value }}
+      </li>
+    </ul>
+
+    <!-- Custom classes -->
+    <h4>Custom classes</h4>
+    <div class="container" v-bind:class="dynamicClass">
+      I am a div tag
+    </div>
+    <button @click="isActive = !isActive">Toogle Class</button>
+
+    <div class="bar">
+      <div
+      style="background:red; height:15px;"
+      :style="{width: `${progressBarWidth}%`}"
+      ></div>
+    </div>
+    <button @click="handleCickPush">Push color</button>
+
   </div>
 </body>
 
@@ -60,45 +84,64 @@
   new Vue({
     el: '#vue-app',
     data: {
-      name: 'xyz',
-      acceptTerms: false,
-      a: 0,
-      b: 0,
-      age: 20
+      progressBarWidth: 10,
+      isActive: false,
+      firstName: 'jack',
+      lastName: 'Smith',
+      address: {
+        streetName: 'JV colony',
+        isActive: true
+      },
+      toDo: ['take rest', 'work', 'call mom', 'walk'],
+      carList: [
+        { brand: 'tata', name: 'nexon', value: '12L', color: 'red' },
+        { brand: 'mahindra', name: 'XUV', value: '10L', color: 'green' },
+        { brand: 'mg', name: 'hector', value: '20L', color: 'yellow' },
+        { brand: 'hyundai', name: 'i20', value: '8L', color: 'blue' }
+      ],
+      carFeatures: {
+        weight: '2000kg',
+        length: '4 Meters',
+        hasSunRoof: false,
+        seating: 4
+      }
     },
-
+    watch: {
+      firstName() {
+        // console.log('first name changed')
+      },
+      fullName(newVal, oldVal) {
+        // console.log('newVal', newVal)
+        if (newVal.toLowerCase() === 'sam smith') {
+          // alert('full name')
+          this.fetchData()
+        }
+      },
+      'address.streetName'() {
+        console.log('street name changed')
+      },
+      'address.isActive'(newVal, oldVal) {
+        // console.log('newVal', newVal)
+        // console.log('oldVal', oldVal)
+      }
+    },
     computed: {
-      aPlusAge() {
-        console.log('I am A')
-        return this.a + this.age
+      fullName() {
+        return this.firstName + ' ' + this.lastName
       },
-      bPlusAge() {
-        console.log('I am B')
-        return this.b + this.age
-      },
+      dynamicClass() {
+        return { active: this.isActive }
+      }
     },
-
     methods: {
-      handleSubmit(event) {
-        // event.preventDefault()
-        console.log('submitted')
+      fetchData() {
+        console.log('Loading...')
+        setTimeout(() => {
+          console.log('Fetched data')
+        }, 2000)
       },
-      handleInput(event) {
-        console.log(event.target.value)
-      },
-      // aPlusAge() {
-      //   console.log('I am A')
-      //   return this.a + this.age
-      // },
-      // bPlusAge() {
-      //   console.log('I am B')
-      //   return this.b + this.age
-      // },
-      addToA() {
-        this.a += 1
-      },
-      addToB() {
-        this.b += 1
+      handleCickPush() {
+        this.progressBarWidth += 10
       }
     }
   });
